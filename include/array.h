@@ -6,6 +6,7 @@
 // tstl = tiny standard template library
 namespace tstl {
 
+// class declaration
 template <typename Ty, size_t N>
 class Array {
 public:
