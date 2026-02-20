@@ -1,6 +1,0 @@
-CompileFlags:
-    Add: [-I../include/]
-
-Diagnostics:
-    ClangTidy:
-        Remove: cppcoreguidelines-avoid-c-arrays
