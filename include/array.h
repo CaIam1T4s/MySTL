@@ -1,11 +1,38 @@
 #ifndef ARRAY_H
 #define	ARRAY_H
 
+#include <cstddef>
 #include <initializer_list>
 
 #include "iterator.h"
 
 namespace mystl {
+
+template <typename Ty, size_t N>
+class ConstArrayIterator {
+public:
+	using DiffType  = std::ptrdiff_t;
+	using ValueType = Ty;
+	using Reference = const Ty&;
+	using Pointer   = const Ty*;
+public:
+	ConstArrayIterator();
+private:
+	Pointer m_ptr;
+};	// class ConstArrayIterator
+
+
+template <typename Ty, size_t N>
+class ArrayIterator : public ConstArrayIterator<Ty, N> {
+public:
+	using ValueType = Ty;
+	using DiffType  = std::ptrdiff_t;
+	using Reference = Ty&;
+	using Pointer   = Ty*;
+public:
+private:
+};
+
 
 // class declaration
 template <typename Ty, size_t N>
@@ -17,6 +44,8 @@ public:
 	using ConstReference = const Ty&;
 	using Pointer        = Ty*;
 	using ConstPointer   = const Ty*;
+	using Iterator       = ArrayIterator<Ty, N>;
+	using ConstIterator  = ConstArrayIterator<Ty, N>;
 public:
 	Array();
 	Array(const Array<Ty, N>& other);
@@ -29,6 +58,7 @@ public:
 	auto At(size_t index) const -> ConstReference;
 	auto Back() -> Reference;
 	auto Back() const -> ConstReference;
+	auto Begin() -> Iterator;
 	[[nodiscard]] auto Empty() const -> bool;
 	void Swap(Array<Ty, N>& other);
 private:
@@ -55,7 +85,9 @@ auto ToArray(Ty (&arr)[N]) -> Array<Ty, N> {
 }
 
 template <typename Ty, size_t N>
-auto ToArray(Ty (&&array)[N]) -> Array<Ty, N>;
+auto ToArray(Ty (&&array)[N]) -> Array<Ty, N> {
+	return Array(move(arr));
+}
 
 // operators
 template <typename Ty, size_t N>
@@ -78,4 +110,4 @@ auto operator>=(const Array<Ty, N>& lhs, const Array<Ty, N>& rhs) -> bool;
 
 }	// namespace mystl
 
-#endif
+#endif	// ARRAY_H
