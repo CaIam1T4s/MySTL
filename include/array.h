@@ -5,65 +5,73 @@
 #include <initializer_list>
 
 #include "iterator.h"
+#include "myexcept.h"
 #include "utility.h"
 
 namespace mystl {
 
 template <typename Ty, size_t N>
-class ConstArrayIterator {
+class ConstArrayiterator {
 public:
-	using DiffType  = std::ptrdiff_t;
-	using ValueType = Ty;
-	using Reference = const Ty&;
-	using Pointer   = const Ty*;
+	using diff_type  = std::ptrdiff_t;
+	using value_type = Ty;
+	using reference = const Ty&;
+	using pointer   = const Ty*;
 public:
-	ConstArrayIterator();
+	ConstArrayiterator();
 
-	auto operator*() -> ValueType {
+	auto operator*() const -> reference {
 		return *m_ptr;
 	}
 
-	auto operator*() const -> ValueType {
-		return *m_ptr;
-	}
-
-	auto operator->() -> Pointer {
+	auto operator->() const -> pointer {
 		return m_ptr;
 	}
 
-	auto operator->() const -> Pointer {
-		return m_ptr;
-	}
-
-	auto operator++() -> ValueType {
+	auto operator++() -> ConstArrayiterator& {
 		++m_ptr;
 		return *this;
 	}
 
-	auto operator++() const ValueType {
-
+	auto operator++(int) -> ConstArrayiterator {
+		auto tmp = *this;
+		++m_ptr;
+		return tmp;
 	}
 
-	auto operator++(int) -> Pointer {
-
+	auto operator--() -> ConstArrayiterator {
+		--m_ptr;
+		return *this;
 	}
 
-	auto operator++(int) -> Pointer {
-
+	auto operator--(int) -> ConstArrayiterator {
+		auto tmp = *this;
+		--m_ptr;
+		return tmp;
 	}
 private:
-	Pointer m_ptr;
-};	// class ConstArrayIterator
+	pointer m_ptr;
+};	// class ConstArrayiterator
 
 
 template <typename Ty, size_t N>
-class ArrayIterator : public ConstArrayIterator<Ty, N> {
+class Arrayiterator : public ConstArrayiterator<Ty, N> {
+private:
+	using MyBase    = ConstArrayiterator<Ty, N>;
 public:
-	using ValueType = Ty;
-	using DiffType  = std::ptrdiff_t;
-	using Reference = Ty&;
-	using Pointer   = Ty*;
+	using value_type = Ty;
+	using diff_type  = std::ptrdiff_t;
+	using reference = Ty&;
+	using pointer   = Ty*;
 public:
+	auto operator*() -> reference {
+		return const_cast<reference>(MyBase::operator*());
+	}
+
+	auto operator->() -> pointer {
+		return const_cast<pointer>(MyBase::operator->());
+	}
+
 private:
 };
 
@@ -73,32 +81,57 @@ template <typename Ty, size_t N>
 class Array {
 public:
 	using SizeType       = size_t;
-	using ValueType      = Ty;
-	using Reference      = Ty&;
-	using ConstReference = const Ty&;
-	using Pointer        = Ty*;
-	using ConstPointer   = const Ty*;
-	using Iterator       = ArrayIterator<Ty, N>;
-	using ConstIterator  = ConstArrayIterator<Ty, N>;
+	using value_type      = Ty;
+	using reference      = Ty&;
+	using const_reference = const Ty&;
+	using pointer        = Ty*;
+	using const_pointer   = const Ty*;
+	using iterator       = Arrayiterator<Ty, N>;
+	using const_iterator  = ConstArrayiterator<Ty, N>;
 public:
 	Array();
-	Array(const Array<Ty, N>& other);
-	Array(Array<Ty, N>&& other) noexcept;
+	Array(const Array<Ty, N>& rhs);
+	auto operator=(const Array<Ty, N>& rhs) -> Array&;
+	Array(Array<Ty, N>&& rhs) noexcept;
+	auto operator=(Array<Ty, N>&& rhs) noexcept -> Array&;
 	Array(std::initializer_list<Ty>);
-	Array(Ty (&arr)[N]);
 	~Array();
+
+	Array(Ty (&arr)[N]);
 public:
-	auto At(size_t index) -> Reference;
-	auto At(size_t index) const -> ConstReference;
-	auto Back() -> Reference;
-	auto Back() const -> ConstReference;
-	auto Begin() -> Iterator;
+	auto At(size_t idx) -> reference {
+		CheckOutOfRange(N, idx);
+		return m_arr[idx];
+	}
+
+	constexpr auto At(size_t idx) const -> const_reference {
+		CheckOutOfRange<N>(idx);
+		return m_arr[idx];
+	}
+
+	auto Back() -> reference;
+	auto Back() const -> const_reference;
+	auto Begin() -> iterator;
+	auto Cbegin() const -> const_iterator;
+	auto End() -> iterator;
+	auto Cend() const -> const_iterator;
+	auto Data() -> Ty*;
+	auto Data() const -> const Ty*;
 	[[nodiscard]] auto Empty() const -> bool;
-	void Swap(Array<Ty, N>& other);
+	void Fill(Ty& val);
+	auto Front() -> reference;
+	auto Front() const -> const_reference;
+	[[nodiscard]] auto MaxSize() const -> SizeType { return N; }
+
+	[[nodiscard]] auto Size() const -> SizeType { return N; }
+
+	void Swap(Array<Ty, N>& rhs) {
+		
+	}
+
+	auto operator[](size_t idx) -> Ty&;
 private:
-	auto CheckSafe(size_t index) -> bool;
-private:
-	Ty m_array[N];
+	Ty m_arr[N];
 };	// class Array
 
 
