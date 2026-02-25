@@ -5,6 +5,7 @@
 #include <initializer_list>
 
 #include "iterator.h"
+#include "utility.h"
 
 namespace mystl {
 
@@ -17,6 +18,39 @@ public:
 	using Pointer   = const Ty*;
 public:
 	ConstArrayIterator();
+
+	auto operator*() -> ValueType {
+		return *m_ptr;
+	}
+
+	auto operator*() const -> ValueType {
+		return *m_ptr;
+	}
+
+	auto operator->() -> Pointer {
+		return m_ptr;
+	}
+
+	auto operator->() const -> Pointer {
+		return m_ptr;
+	}
+
+	auto operator++() -> ValueType {
+		++m_ptr;
+		return *this;
+	}
+
+	auto operator++() const ValueType {
+
+	}
+
+	auto operator++(int) -> Pointer {
+
+	}
+
+	auto operator++(int) -> Pointer {
+
+	}
 private:
 	Pointer m_ptr;
 };	// class ConstArrayIterator
@@ -85,8 +119,8 @@ auto ToArray(Ty (&arr)[N]) -> Array<Ty, N> {
 }
 
 template <typename Ty, size_t N>
-auto ToArray(Ty (&&array)[N]) -> Array<Ty, N> {
-	return Array(move(arr));
+auto ToArray(Ty (&&arr)[N]) -> Array<Ty, N> {
+	return Array(Move(arr));
 }
 
 // operators
