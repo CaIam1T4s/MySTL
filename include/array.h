@@ -15,8 +15,8 @@ class ConstArrayiterator {
 public:
 	using diff_type  = std::ptrdiff_t;
 	using value_type = Ty;
-	using reference = const Ty&;
-	using pointer   = const Ty*;
+	using reference  = const Ty&;
+	using pointer    = const Ty*;
 public:
 	ConstArrayiterator();
 
@@ -57,12 +57,12 @@ private:
 template <typename Ty, size_t N>
 class Arrayiterator : public ConstArrayiterator<Ty, N> {
 private:
-	using MyBase    = ConstArrayiterator<Ty, N>;
+	using MyBase     = ConstArrayiterator<Ty, N>;
 public:
 	using value_type = Ty;
 	using diff_type  = std::ptrdiff_t;
-	using reference = Ty&;
-	using pointer   = Ty*;
+	using reference  = Ty&;
+	using pointer    = Ty*;
 public:
 	auto operator*() -> reference {
 		return const_cast<reference>(MyBase::operator*());
@@ -80,13 +80,13 @@ private:
 template <typename Ty, size_t N>
 class Array {
 public:
-	using SizeType       = size_t;
+	using SizeType        = size_t;
 	using value_type      = Ty;
-	using reference      = Ty&;
+	using reference       = Ty&;
 	using const_reference = const Ty&;
-	using pointer        = Ty*;
+	using pointer         = Ty*;
 	using const_pointer   = const Ty*;
-	using iterator       = Arrayiterator<Ty, N>;
+	using iterator        = Arrayiterator<Ty, N>;
 	using const_iterator  = ConstArrayiterator<Ty, N>;
 public:
 	Array();
