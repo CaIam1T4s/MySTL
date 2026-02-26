@@ -76,7 +76,6 @@ private:
 };
 
 
-// class declaration
 template <typename Ty, size_t N>
 class Array {
 public:
@@ -94,7 +93,9 @@ public:
 	auto operator=(const Array<Ty, N>& rhs) -> Array&;
 	Array(Array<Ty, N>&& rhs) noexcept;
 	auto operator=(Array<Ty, N>&& rhs) noexcept -> Array&;
-	Array(std::initializer_list<Ty>);
+	Array(std::initializer_list<Ty>) {
+
+	}
 	~Array();
 
 	Array(Ty (&arr)[N]);
@@ -105,7 +106,7 @@ public:
 	}
 
 	constexpr auto At(size_t idx) const -> const_reference {
-		CheckOutOfRange<N>(idx);
+		CheckOutOfRange<N, idx>();
 		return m_arr[idx];
 	}
 

@@ -6,9 +6,9 @@
 
 namespace mystl {
 
-template <size_t N>
-constexpr auto CheckOutOfRange(size_t idx) {
-	if constexpr (N == 0 || (idx + 1 >= N)) {
+template <size_t N, size_t Idx>
+constexpr auto CheckOutOfRange() -> bool {
+	if constexpr (N == 0 || (Idx + 1 > N)) {
 		throw std::out_of_range("index out of range");
 	} else {
 		return false;
@@ -16,7 +16,7 @@ constexpr auto CheckOutOfRange(size_t idx) {
 	return true;
 }
 
-auto CheckOutOfRange(size_t size, size_t idx) {
+auto CheckOutOfRange(size_t size, size_t idx) -> bool {
 	if (size == 0 || (idx + 1 >= size)) {
 		throw std::out_of_range("index out of range");
 	} else {
