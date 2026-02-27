@@ -18,8 +18,9 @@ public:
 	using reference  = const Ty&;
 	using pointer    = const Ty*;
 public:
-	ConstArrayiterator();
-
+	ConstArrayiterator() : m_ptr() {}
+	explicit ConstArrayiterator(pointer beg, size_t off) : m_ptr(beg + off) {}
+public:
 	auto operator*() const -> reference {
 		return *m_ptr;
 	}
@@ -79,12 +80,13 @@ private:
 template <typename Ty, size_t N>
 class Array {
 public:
-	using SizeType        = size_t;
+	using size_type        = size_t;
 	using value_type      = Ty;
 	using reference       = Ty&;
 	using const_reference = const Ty&;
 	using pointer         = Ty*;
 	using const_pointer   = const Ty*;
+
 	using iterator        = Arrayiterator<Ty, N>;
 	using const_iterator  = ConstArrayiterator<Ty, N>;
 public:
@@ -100,31 +102,37 @@ public:
 
 	Array(Ty (&arr)[N]);
 public:
-	auto At(size_t idx) -> reference {
+	[[nodiscard]] auto At(size_t idx) -> reference {
 		CheckOutOfRange(N, idx);
 		return m_arr[idx];
 	}
 
-	constexpr auto At(size_t idx) const -> const_reference {
+	[[nodiscard]] constexpr auto At(size_t idx) const -> const_reference {
 		CheckOutOfRange<N, idx>();
 		return m_arr[idx];
 	}
 
-	auto Back() -> reference;
-	auto Back() const -> const_reference;
-	auto Begin() -> iterator;
-	auto Cbegin() const -> const_iterator;
-	auto End() -> iterator;
-	auto Cend() const -> const_iterator;
-	auto Data() -> Ty*;
-	auto Data() const -> const Ty*;
-	[[nodiscard]] auto Empty() const -> bool;
-	void Fill(Ty& val);
-	auto Front() -> reference;
-	auto Front() const -> const_reference;
-	[[nodiscard]] auto MaxSize() const -> SizeType { return N; }
+	[[nodiscard]] auto Back() -> reference {
 
-	[[nodiscard]] auto Size() const -> SizeType { return N; }
+	}
+
+	[[nodiscard]] auto Back() const -> const_reference;
+	[[nodiscard]] auto Begin() -> iterator;
+	[[nodiscard]] auto Cbegin() const -> const_iterator;
+	[[nodiscard]] auto End() -> iterator;
+	[[nodiscard]] auto Cend() const -> const_iterator;
+	[[nodiscard]] auto Data() -> Ty*;
+	[[nodiscard]] auto Data() const -> const Ty*;
+
+	[[nodiscard]] auto Empty() const -> bool {
+
+	}
+	void Fill(Ty& val);
+	[[nodiscard]] auto Front() -> reference;
+	[[nodiscard]] auto Front() const -> const_reference;
+	[[nodiscard]] auto MaxSize() const -> size_type { return N; }
+
+	[[nodiscard]] auto Size() const -> size_type { return N; }
 
 	void Swap(Array<Ty, N>& rhs) {
 		
